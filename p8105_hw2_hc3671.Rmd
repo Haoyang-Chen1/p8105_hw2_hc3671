@@ -12,6 +12,7 @@ include packages that will be used:
 
 ```{r}
 library(tidyverse)
+library(dplyr)
 ```
 
 import and manipulate data.  
@@ -19,8 +20,28 @@ import and manipulate data.
 ```{r echo=FALSE}
 
 pol_df = 
-  read.csv("data/pols-month.csv") |> 
+  read_csv("data/pols-month.csv") |> 
   separate(mon, into = c("year", "month", "day"), sep = "-") |> 
-  
+  mutate(
+    year = as.integer(year),
+    month = as.integer(month),   # originally as character
+    month = month.name[month],
+    president = ifelse(prez_gop == 1, "gop", "dem")
+  ) |> 
+  select(year, month, president, everything(), -c(day, prez_gop, prez_dem), )
+
+snp_df = 
+  read_csv("data/snp.csv") |> 
+  separate(date, into = c("month", "day", "year"), sep = "/") |> 
+  mutate(
+    year = as.integer(paste0("20", year)),
+    month = as.integer(month),
+    month = month.name[month],
+  ) |> 
+  select(year, month, everything(), -day) |> 
+  arrange(year, month)
+
+
+
 ```
 
