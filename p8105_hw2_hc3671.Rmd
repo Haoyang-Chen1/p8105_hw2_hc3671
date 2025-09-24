@@ -41,7 +41,17 @@ snp_df =
   select(year, month, everything(), -day) |> 
   arrange(year, month)
 
-
-
+unemploy_df = 
+  read_csv("data/unemployment.csv") |>
+  pivot_longer(
+      Jan:Dec,
+      names_to = "month",
+      values_to = "unemp_per"
+  ) |> 
+  janitor::clean_names() |> 
+  mutate(
+    year = as.integer(year),
+    month = month.name[match(month, month.abb)]
+  )
 ```
 
