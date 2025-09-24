@@ -1,0 +1,26 @@
+---
+title: "p8105_hw2_hc3671"
+author: "Barry"
+date: "2025-09-23"
+output: github_document
+---
+
+
+## Problem 1
+
+include packages that will be used:
+
+```{r}
+library(tidyverse)
+```
+
+import and manipulate data.  
+
+```{r echo=FALSE}
+
+pol_df = 
+  read.csv("data/pols-month.csv") |> 
+  separate(mon, into = c("year", "month", "day"), sep = "-") |> 
+  
+```
+
