@@ -12,6 +12,7 @@ include packages that will be used:
 ```{r}
 library(tidyverse)
 library(dplyr)
+library(readxl)
 ```
 
 import and manipulate data.
@@ -60,8 +61,45 @@ joint_df =
 
 Description of the data sets above:\
 The `pol_df dataset` contains information about the politicians of the two parties in the USA, which includes the identity of the party and the number of different politicians in both parties.The data span from 1947 to 2015, with monthly observations.\
-The `snp_df dataset` shows the Standard & Poor’s stock market index monthly from 2000 to 2099(including prediction). The `unemploy_df dataset   reports the monthly unemployment rate in the United States. The data cover the period from 1948 to 2015. At first, the value is presented in months. I reshaped them to make sure the format is compatible with other datasets.    The joint_df dataset is the combination of the three dataset above, which obeys the date information of the pol_df dataset. Some important values includes:`yeas`,`month`,`president`,`close rate`, and`umployment rate\`.
+The `snp_df dataset` shows the Standard & Poor’s stock market index monthly from 2000 to 2099(including prediction).\
+The `unemploy_df dataset` reports the monthly unemployment rate in the United States. The data cover the period from 1948 to 2015. At first, the value is presented in months. I reshaped them to make sure the format is compatible with other datasets. The joint_df dataset is the combination of the three dataset above, which obeys the date information of the pol_df dataset. Some important values includes:`yeas`,`month`,`president`,`close rate`, and`umployment rate`.\
+
+
 ## Problem 2
 
+```{r}
+Mr_trash_wheel = 
+  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N653") |> 
+  janitor::clean_names() |> 
+  mutate(
+    sports_balls = as.integer(round(sports_balls)),
+    type = "Mr. Trash Wheel"
+   ) |> 
+  select(date, everything(), -c(dumpster, month, year))
 
+Professor_trash_wheel = 
+  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M120") |> 
+  janitor::clean_names() |> 
+  mutate(
+    type = "Professor Trash Wheel"
+   ) |> 
+  select(date, everything(), -c(dumpster, month, year))
+
+Gwynnda_trash_wheel = 
+  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", range = "A2:L265") |> 
+  janitor::clean_names() |> 
+  mutate(
+    type = "Gwynnda Trash Wheel"
+   ) |> 
+  select(date, everything(), -c(dumpster, month, year))
+  
+trash_wheel = 
+  bind_rows(Mr_trash_wheel, Professor_trash_wheel, Gwynnda_trash_wheel) |> 
+  select(date, type, everything()) |> 
+  arrange(date)
+
+```
+
+The final dataset has `r nrow(trash_wheel)` observations, including three trash wheels:Mr. Trash Wheel, Professor Trash Wheel, Gwynnda Trash Wheel. Some key values are dumpster identifier `type`, date `date` and the measure of different kinds of trash like `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, `polystyrene`, and `cigarette_butts`.     
+More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.    
 
