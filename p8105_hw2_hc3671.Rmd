@@ -67,7 +67,6 @@ The `pol_df dataset` contains information about the politicians of the two parti
 The `snp_df dataset` shows the Standard & Poor’s stock market index monthly from 2000 to 2099(including prediction).\
 The `unemploy_df dataset` reports the monthly unemployment rate in the United States. The data cover the period from 1948 to 2015. At first, the value is presented in months. I reshaped them to make sure the format is compatible with other datasets. The joint_df dataset is the combination of the three dataset above, which obeys the date information of the pol_df dataset. Some important values includes:`yeas`,`month`,`president`,`close rate`, and`umployment rate`.\
 
-
 ## Problem 2
 
 ```{r}
@@ -103,9 +102,8 @@ trash_wheel =
 
 ```
 
-The final dataset has `r nrow(trash_wheel)` observations, including three trash wheels:Mr. Trash Wheel, Professor Trash Wheel, Gwynnda Trash Wheel. Some key values are dumpster identifier `type`, date `date` and the measure of different kinds of trash like `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, `polystyrene`, and `cigarette_butts`.     
-More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.  
-
+The final dataset has `r nrow(trash_wheel)` observations, including three trash wheels:Mr. Trash Wheel, Professor Trash Wheel, Gwynnda Trash Wheel. Some key values are dumpster identifier `type`, date `date` and the measure of different kinds of trash like `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, `polystyrene`, and `cigarette_butts`.\
+More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.
 
 ## Problem 3
 
@@ -139,7 +137,8 @@ joint_data =
 
 ```
 
-The resulting tidy data is from the zip data left jointed by the price data by both zip code and county name because there are same zip codes in different counties. And I join the dates columns together and make a new variable called dates. The final data consists 14 variables including information of the location, dates, price and file dates.    
+The resulting tidy data is from the zip data left jointed by the price data by both zip code and county name because there are same zip codes in different counties. And I join the dates columns together and make a new variable called dates. The final data consists 14 variables including information of the location, dates, price and file dates.
+
 The final data contains `r nrow(joint_data)` observations and has `r length(unique(joint_data$zip_code))` unique ZIP codes with `r length(unique(joint_data$neighborhood))` unique neighborhoods.
 
 There are `r length(zip$zip_code[!zip$zip_code %in% price$zip_code])` ZIP codes appear in the ZIP code dataset but not in the Zillow Rental Price dataset like: `r as.integer(head(zip$zip_code[!zip$zip_code %in% price$zip_code], 5))`. This may be because some zip place is not availabel for Zillow to collect data and the collecting is not done yet.
@@ -166,6 +165,5 @@ top10_change =
 print(top10_change)
 
 ```
+
 The table above shows the 10 ZIP codes (along with the borough and neighborhood) with largest drop in price from January 2020 to 2021.
-
-
