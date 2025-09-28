@@ -101,5 +101,17 @@ trash_wheel =
 ```
 
 The final dataset has `r nrow(trash_wheel)` observations, including three trash wheels:Mr. Trash Wheel, Professor Trash Wheel, Gwynnda Trash Wheel. Some key values are dumpster identifier `type`, date `date` and the measure of different kinds of trash like `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, `polystyrene`, and `cigarette_butts`.     
-More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.    
+More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.  
+
+
+## Problem 3
+
+```{r}
+zip = 
+  read.csv("zillow_data/Zip Codes.csv") |> 
+  janitor::clean_names()
+price = 
+  read.csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") |> 
+  janitor::clean_names()
+```
 
