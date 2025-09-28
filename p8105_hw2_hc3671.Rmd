@@ -9,15 +9,18 @@ output: github_document
 
 include packages that will be used:
 
-```{r}
+```{r message=FALSE}
 library(tidyverse)
 library(dplyr)
 library(readxl)
+library(stringr)
+library(readr)
+library(tidyr)
 ```
 
 import and manipulate data.
 
-```{r echo=FALSE}
+```{r message = FALSE}
 
 pol_df = 
   read_csv("data/pols-month.csv") |> 
@@ -106,12 +109,63 @@ More specifically, the total weight of trash collected by Professor Trash Wheel 
 
 ## Problem 3
 
-```{r}
+```{r message=FALSE}
 zip = 
-  read.csv("zillow_data/Zip Codes.csv") |> 
-  janitor::clean_names()
+  read_csv("zillow_data/Zip Codes.csv", na = "NA") |> 
+  janitor::clean_names() 
+
 price = 
-  read.csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") |> 
-  janitor::clean_names()
+  read_csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv", na = "NA") |> 
+  janitor::clean_names() |> 
+  mutate(
+    county_name = str_remove(county_name, " County$")
+  ) |> 
+  rename_with(~str_remove(.x, "^x"), .cols = "x2015_01_31" : "x2024_08_31") |> 
+  rename(zip_code = region_name, county = county_name) |> 
+  drop_na(`2015_01_31` : `2024_08_31`) |> 
+  select(-c(region_type, state_name))
+
+joint_data = 
+  right_join(zip, price, by =c("zip_code", "county")) |> 
+  pivot_longer(
+    `2015_01_31` : `2024_08_31`,
+    names_to = "date",
+    values_to = "price"
+  ) |> 
+  select(
+    state, city, county, state_fips, county_fips, county_code, metro,      neighborhood, zip_code, region_id, size_rank, date, price,             file_date
+  )
+  
+
 ```
+
+The resulting tidy data is from the zip data left jointed by the price data by both zip code and county name because there are same zip codes in different counties. And I join the dates columns together and make a new variable called dates. The final data consists 14 variables including information of the location, dates, price and file dates.    
+The final data contains `r nrow(joint_data)` observations and has `r length(unique(joint_data$zip_code))` unique ZIP codes with `r length(unique(joint_data$neighborhood))` unique neighborhoods.
+
+There are `r length(zip$zip_code[!zip$zip_code %in% price$zip_code])` ZIP codes appear in the ZIP code dataset but not in the Zillow Rental Price dataset like: `r as.integer(head(zip$zip_code[!zip$zip_code %in% price$zip_code], 5))`. This may be because some zip place is not availabel for Zillow to collect data and the collecting is not done yet.
+
+```{r}
+
+top10_change = 
+  joint_data |> 
+  group_by(zip_code)  |> 
+  summarise(
+    price_max = max(price, na.rm = TRUE),
+    price_min = min(price, na.rm = TRUE),
+    price_range = price_max - price_min
+  ) |> 
+  arrange(desc(price_range)) |> 
+  slice_head(n = 10) |> 
+  left_join(
+    (
+      zip |> 
+        select(zip_code, neighborhood, county)
+    ),
+    by = "zip_code")
+
+print(top10_change)
+
+```
+The table above shows the 10 ZIP codes (along with the borough and neighborhood) with largest drop in price from January 2020 to 2021.
+
 
