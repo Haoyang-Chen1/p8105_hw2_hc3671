@@ -120,7 +120,9 @@ price =
   ) |> 
   rename_with(~str_remove(.x, "^x"), .cols = "x2015_01_31" : "x2024_08_31") |> 
   rename(zip_code = region_name, county = county_name) |> 
-  drop_na(`2015_01_31` : `2024_08_31`) |> 
+  filter(
+    !if_all(`2015_01_31` : `2024_08_31`, is.na)
+    ) |> 
   select(-c(region_type, state_name))
 
 joint_data = 
@@ -143,9 +145,22 @@ The final data contains `r nrow(joint_data)` observations and has `r length(uniq
 
 There are `r length(zip$zip_code[!zip$zip_code %in% price$zip_code])` ZIP codes appear in the ZIP code dataset but not in the Zillow Rental Price dataset like: `r as.integer(head(zip$zip_code[!zip$zip_code %in% price$zip_code], 5))`. This may be because some zip place is not availabel for Zillow to collect data and the collecting is not done yet.
 
+The code below shows two types of the price change. One is for the two months, and the other is the change over this whole period.
+
 ```{r}
 
-top10_change = 
+top10_change_jump = 
+  right_join(zip, price, by =c("zip_code", "county")) |> 
+  mutate(
+    change = `2020_01_31` - `2021_01_31`
+  ) |> 
+  arrange(desc(change)) |> 
+  select(zip_code, neighborhood, county, change) |> 
+  head(10)
+print(top10_change_jump)
+
+  
+top10_change_period = 
   joint_data |> 
   group_by(zip_code)  |> 
   summarise(
@@ -162,8 +177,8 @@ top10_change =
     ),
     by = "zip_code")
 
-print(top10_change)
+print(top10_change_period)
 
 ```
 
-The table above shows the 10 ZIP codes (along with the borough and neighborhood) with largest drop in price from January 2020 to 2021.
+For the change of January 2020 and January 2021, the largest drop of the rental price is about 913 in Lower Manhattan. And then for the period change, the largest drop is around 3000 in Lower Manhattan. Both of them shows that the covid-19 pandemic really has an dramatically influence on the reantal price.
