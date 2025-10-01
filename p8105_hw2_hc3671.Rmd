@@ -126,7 +126,7 @@ price =
   select(-c(region_type, state_name))
 
 joint_data = 
-  right_join(zip, price, by =c("zip_code", "county")) |> 
+  right_join(zip, price, by = c("zip_code", "county")) |> 
   pivot_longer(
     `2015_01_31` : `2024_08_31`,
     names_to = "date",
