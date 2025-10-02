@@ -144,7 +144,7 @@ joint_data =
 
 The resulting tidy data is from the zip data left jointed by the price data by both zip code and county name because there are same zip codes in different counties. And I join the dates columns together and make a new variable called dates. The final data consists 14 variables including information of the location, dates, price and file dates.
 
-The final data contains `r nrow(joint_data)` observations and has `r length(unique(joint_data$zip_code))` unique ZIP codes with `r length(unique(joint_data$neighborhood))` unique neighborhoods.
+The final data contains `r nrow(joint_data)` observations and has `r length(unique(joint_data$zip_code))` unique ZIP codes with `r length(unique(joint_data$neighborhood))` unique neighborhoods, but one is a missing value, we are not sure.
 
 There are `r length(zip$zip_code[!zip$zip_code %in% price$zip_code])` ZIP codes appear in the ZIP code dataset but not in the Zillow Rental Price dataset like: `r as.integer(head(zip$zip_code[!zip$zip_code %in% price$zip_code], 5))`. This may be because some zip place is not availabel for Zillow to collect data and the collecting is not done yet.
 
