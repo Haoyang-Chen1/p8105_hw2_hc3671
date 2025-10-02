@@ -71,39 +71,42 @@ The `unemploy_df dataset` reports the monthly unemployment rate in the United St
 
 ```{r}
 Mr_trash_wheel = 
-  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N653") |> 
+  read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N709") |> 
   janitor::clean_names() |> 
   mutate(
     sports_balls = as.integer(round(sports_balls)),
-    type = "Mr. Trash Wheel"
+    type = "Mr. Trash Wheel",
+    year = as.character(year)
    ) |> 
-  select(date, everything(), -c(dumpster, month, year))
+  select(date, everything(), -c(dumpster))
 
 Professor_trash_wheel = 
-  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M120") |> 
+  read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range = "A2:M134") |> 
   janitor::clean_names() |> 
   mutate(
-    type = "Professor Trash Wheel"
+    type = "Professor Trash Wheel",
+    year = as.character(year)
    ) |> 
-  select(date, everything(), -c(dumpster, month, year))
+  select(date, everything(), -c(dumpster))
 
-Gwynnda_trash_wheel = 
-  read_excel("data/202409 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", range = "A2:L265") |> 
+Gwynns_trash_wheel = 
+  read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel", range = "A2:L351") |> 
   janitor::clean_names() |> 
   mutate(
-    type = "Gwynnda Trash Wheel"
+    type = "Gwynns Trash Wheel",
+    year = as.character(year)
    ) |> 
-  select(date, everything(), -c(dumpster, month, year))
+  select(date, everything(), -c(dumpster))
   
 trash_wheel = 
-  bind_rows(Mr_trash_wheel, Professor_trash_wheel, Gwynnda_trash_wheel) |> 
+  bind_rows(Mr_trash_wheel, Professor_trash_wheel, Gwynns_trash_wheel) |> 
   select(date, type, everything()) |> 
   arrange(date)
 
 ```
 
 The final dataset has `r nrow(trash_wheel)` observations, including three trash wheels:Mr. Trash Wheel, Professor Trash Wheel, Gwynnda Trash Wheel. Some key values are dumpster identifier `type`, date `date` and the measure of different kinds of trash like `weight_tons`, `volume_cubic_yards`, `plastic_bottles`, `polystyrene`, and `cigarette_butts`.\
-More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynnda_trash_wheel$cigarette_butts[Gwynnda_trash_wheel$year == 2022 & Gwynnda_trash_wheel$month == "June"], na.rm = TRUE)`.
+More specifically, the total weight of trash collected by Professor Trash Wheel is `r sum(Professor_trash_wheel$weight_tons, na.rm = TRUE)`. And the total number of cigarette butts collected by Gwynnda in June of 2022 is `r sum(Gwynns_trash_wheel$cigarette_butts[Gwynns_trash_wheel$year == 2022 & Gwynns_trash_wheel$month == "June"], na.rm = TRUE)`.
 
 ## Problem 3
 
